@@ -10,7 +10,6 @@ TRACK_FILE = "sent_sprints.json"
 
 
 def load_sent_sprints():
-    """Load already emailed sprint IDs"""
 
     if not os.path.exists(TRACK_FILE):
         return {}
@@ -21,6 +20,7 @@ def load_sent_sprints():
 
         if isinstance(data, dict):
             return data
+
         return {}
 
     except json.JSONDecodeError:
@@ -29,7 +29,6 @@ def load_sent_sprints():
 
 
 def save_sent_sprints(data):
-    """Save emailed sprint IDs"""
 
     with open(TRACK_FILE, "w") as f:
         json.dump(data, f, indent=2)
@@ -43,20 +42,27 @@ def run():
 
     sprints = get_sprints_ending_today()
 
+    print("📊 Sprints found:", sprints)
+
     if not sprints:
         print("ℹ️ No sprint ended today")
         return
 
     for sprint in sprints:
 
-        # safer unique id
         sprint_id = str(sprint.get("sprint_id") or sprint.get("sprint_name"))
 
-        if sprint_id in sent_sprints:
-            print(f"⏭ Email already sent for sprint: {sprint['sprint_name']}")
+        if not sprint_id:
+            print("⚠️ Skipping sprint due to missing ID:", sprint)
             continue
 
-        print(f"🏁 Sprint ended: {sprint['sprint_name']}")
+        sprint_name = sprint.get("sprint_name", "Unknown Sprint")
+
+        if sprint_id in sent_sprints:
+            print(f"⏭ Email already sent for sprint: {sprint_name}")
+            continue
+
+        print(f"🏁 Sprint ended: {sprint_name}")
 
         try:
             summary = generate_summary(sprint)
@@ -65,13 +71,13 @@ def run():
 
             print("✅ Email sent successfully")
 
-            # mark as sent
             sent_sprints[sprint_id] = True
 
         except Exception as e:
-            print(f"❌ Failed to send email for {sprint['sprint_name']}: {e}")
+            print(f"❌ Failed to send email for {sprint_name}: {e}")
 
     save_sent_sprints(sent_sprints)
+
     print("💾 Sprint tracking file updated")
 
 
