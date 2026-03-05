@@ -10,6 +10,7 @@ TRACK_FILE = "sent_sprints.json"
 
 
 def load_sent_sprints():
+    """Load already emailed sprint IDs"""
 
     if not os.path.exists(TRACK_FILE):
         return {}
@@ -18,52 +19,60 @@ def load_sent_sprints():
         with open(TRACK_FILE, "r") as f:
             data = json.load(f)
 
-            if isinstance(data, dict):
-                return data
-            else:
-                return {}
+        if isinstance(data, dict):
+            return data
+        return {}
 
-    except:
+    except json.JSONDecodeError:
+        print("⚠️ Could not read sent_sprints.json. Starting fresh.")
         return {}
 
 
 def save_sent_sprints(data):
+    """Save emailed sprint IDs"""
+
     with open(TRACK_FILE, "w") as f:
         json.dump(data, f, indent=2)
 
 
 def run():
 
-    print("Checking for sprint completion...")
+    print("🔍 Checking for sprint completion...")
 
     sent_sprints = load_sent_sprints()
 
     sprints = get_sprints_ending_today()
 
     if not sprints:
-        print("No sprint ended today")
+        print("ℹ️ No sprint ended today")
         return
 
     for sprint in sprints:
 
-        sprint_id = str(sprint["sprint_name"])
+        # safer unique id
+        sprint_id = str(sprint.get("sprint_id") or sprint.get("sprint_name"))
 
         if sprint_id in sent_sprints:
-            print("Email already sent for:", sprint["sprint_name"])
+            print(f"⏭ Email already sent for sprint: {sprint['sprint_name']}")
             continue
 
-        print("Sprint ended:", sprint["sprint_name"])
+        print(f"🏁 Sprint ended: {sprint['sprint_name']}")
 
-        summary = generate_summary(sprint)
+        try:
+            summary = generate_summary(sprint)
 
-        send_email(summary)
+            send_email(summary)
 
-        print("Email sent successfully")
+            print("✅ Email sent successfully")
 
-        # mark as sent
-        sent_sprints[sprint_id] = True
+            # mark as sent
+            sent_sprints[sprint_id] = True
+
+        except Exception as e:
+            print(f"❌ Failed to send email for {sprint['sprint_name']}: {e}")
 
     save_sent_sprints(sent_sprints)
+    print("💾 Sprint tracking file updated")
 
 
 if __name__ == "__main__":
