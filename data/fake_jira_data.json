@@ -20,5 +20,14 @@
     "completed_issues": 18,
     "bugs_fixed": 2,
     "story_points": 42
+  },
+  {
+    "project_name": "Steward",
+    "sprint_name": "Sprint 10",
+    "start_date": "2026-03-01",
+    "end_date": "2026-03-05",
+    "completed_issues": 25,
+    "bugs_fixed": 4,
+    "story_points": 60
   }
 ]

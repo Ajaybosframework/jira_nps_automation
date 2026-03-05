@@ -1,25 +1,19 @@
 import json
-from datetime import date
-
-def get_sprints():
-
-    with open("data/fake_jira_data.json") as f:
-        data = json.load(f)
-
-    return data
+from datetime import datetime
 
 
 def get_sprints_ending_today():
 
-    today = str(date.today())
+    with open("data/fake_jira_data.json") as file:
+        sprints = json.load(file)
 
-    sprints = get_sprints()
+    today = datetime.today().strftime("%Y-%m-%d")
 
-    result = []
+    ending_sprints = []
 
     for sprint in sprints:
 
         if sprint["end_date"] == today:
-            result.append(sprint)
+            ending_sprints.append(sprint)
 
-    return result
+    return ending_sprints
