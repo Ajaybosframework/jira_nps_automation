@@ -1,0 +1,29 @@
+name: Sprint Feedback Automation
+
+on:
+  schedule:
+    - cron: "0 9 * * *"   # Runs daily at 9AM
+  workflow_dispatch:      # allows manual run
+
+jobs:
+  run-script:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Automation Script
+        run: |
+          python main.py
