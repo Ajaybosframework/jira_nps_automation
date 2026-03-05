@@ -2,7 +2,7 @@ name: Sprint Feedback Automation
 
 on:
   schedule:
-    - cron: "0 9 * * *"   # Runs daily at 9AM
+    - cron: "*/5 * * * *"   
   workflow_dispatch:      # allows manual run
 
 jobs:
