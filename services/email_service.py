@@ -5,7 +5,7 @@ import config
 
 def send_email(summary):
 
-    subject = "Sprint Completed – Feedback Request"
+    subject = "Test Sprint Completed – Feedback Request"
 
     body = f"""
 Hello,
