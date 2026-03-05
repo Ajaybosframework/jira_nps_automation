@@ -10,11 +10,21 @@ TRACK_FILE = "sent_sprints.json"
 
 
 def load_sent_sprints():
+
     if not os.path.exists(TRACK_FILE):
         return {}
 
-    with open(TRACK_FILE, "r") as f:
-        return json.load(f)
+    try:
+        with open(TRACK_FILE, "r") as f:
+            data = json.load(f)
+
+            if isinstance(data, dict):
+                return data
+            else:
+                return {}
+
+    except:
+        return {}
 
 
 def save_sent_sprints(data):
