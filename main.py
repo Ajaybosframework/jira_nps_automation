@@ -46,7 +46,7 @@ def run():
 
     for sprint in sprints:
 
-        sprint_id = str(sprint["sprint_id"])
+        sprint_id = str(sprint["sprint_name"])
 
         if sprint_id in sent_sprints:
             print("Email already sent for:", sprint["sprint_name"])
