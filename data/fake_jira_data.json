@@ -1,0 +1,24 @@
+[
+  {
+    "project_name": "Steward Project",
+    "client_email": "client1@gmail.com",
+    "sprint_name": "Sprint 14",
+    "sprint_id": 101,
+    "start_date": "2026-02-20",
+    "end_date": "2026-03-05",
+    "completed_issues": 32,
+    "bugs_fixed": 5,
+    "story_points": 78
+  },
+  {
+    "project_name": "Environmental Dashboard",
+    "client_email": "client2@gmail.com",
+    "sprint_name": "Sprint 6",
+    "sprint_id": 102,
+    "start_date": "2026-02-25",
+    "end_date": "2026-03-12",
+    "completed_issues": 18,
+    "bugs_fixed": 2,
+    "story_points": 42
+  }
+]
