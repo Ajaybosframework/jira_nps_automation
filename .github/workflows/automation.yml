@@ -1,29 +1,36 @@
-name: Sprint Feedback Automation
+name: Jira Sprint Automation
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   
-  workflow_dispatch:      # allows manual run
+    # Runs every hour at minute 0 (e.g., 1:00, 2:00) to save GitHub minutes
+    - cron: "*/5 * * * *"
+  # This line lets you run it manually from the "Actions" tab
+  workflow_dispatch:
 
 jobs:
   run-script:
-
     runs-on: ubuntu-latest
 
     steps:
-
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4 # Updated to v4 (latest stable)
 
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: '3.11'
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
+          # Ensure your requirements.txt includes: jira, requests, etc.
           pip install -r requirements.txt
 
-      - name: Run Automation Script
+      - name: Run script
         run: |
           python main.py
+        env:
+          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
