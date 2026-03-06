@@ -1,4 +1,4 @@
 .env
-.venv
+venv
+__pycache__
 database/*.db
-sent_sprints.json
