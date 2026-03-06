@@ -1,7 +1,7 @@
-EMAIL_SENDER = "no.replybosframework@gmail.com"
-EMAIL_PASSWORD = "vfnp nzsp exji jgwg"
+import os
 
-NPS_FORM_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSfGNYyWFBu78x1cVk8T6GfW3joTWA4hFNOLP5oNZWLwr8v6zg/viewform?usp=preview"
-CLIENT_EMAIL = "vikhyath.rai@bosframework.com"
-
-SLACK_WEBHOOK = "https://hooks.slack.com/services/xxxxx"
+EMAIL_SENDER = os.getenv("EMAIL_SENDER")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+NPS_FORM_LINK = "your_link_here"
+CLIENT_EMAIL = "your_client_email_here"
+SLACK_WEBHOOK = os.getenv("SLACK_WEBHOOK")
