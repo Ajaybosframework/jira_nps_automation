@@ -1,5 +1,5 @@
 import requests
-import config
+from config import SLACK_WEBHOOK_URL
 
 
 def send_slack_message(message):
@@ -8,4 +8,4 @@ def send_slack_message(message):
         "text": message
     }
 
-    requests.post(config.SLACK_WEBHOOK, json=payload)
+    requests.post(SLACK_WEBHOOK_URL, json=payload)

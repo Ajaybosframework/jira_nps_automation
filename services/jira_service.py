@@ -3,7 +3,6 @@ from requests.auth import HTTPBasicAuth
 from datetime import datetime
 from config import JIRA_EMAIL, JIRA_API_TOKEN, JIRA_BASE_URL
 
-
 auth = HTTPBasicAuth(JIRA_EMAIL, JIRA_API_TOKEN)
 
 headers = {
@@ -11,26 +10,47 @@ headers = {
 }
 
 
+def get_boards():
+
+    url = f"{JIRA_BASE_URL}/rest/agile/1.0/board"
+
+    response = requests.get(url, headers=headers, auth=auth)
+
+    return response.json().get("values", [])
+
+
+def get_sprints(board_id):
+
+    url = f"{JIRA_BASE_URL}/rest/agile/1.0/board/{board_id}/sprint"
+
+    response = requests.get(url, headers=headers, auth=auth)
+
+    return response.json().get("values", [])
+
+
+def get_issues(sprint_id):
+
+    url = f"{JIRA_BASE_URL}/rest/agile/1.0/sprint/{sprint_id}/issue"
+
+    response = requests.get(url, headers=headers, auth=auth)
+
+    return response.json().get("issues", [])
+
+
 def get_sprints_ending_today():
 
     results = []
 
-    boards = requests.get(
-        f"{JIRA_BASE_URL}/rest/agile/1.0/board",
-        headers=headers,
-        auth=auth
-    ).json()["values"]
+    boards = get_boards()
+
+    today = datetime.utcnow().date()
 
     for board in boards:
 
         board_id = board["id"]
         board_name = board["name"]
 
-        sprints = requests.get(
-            f"{JIRA_BASE_URL}/rest/agile/1.0/board/{board_id}/sprint",
-            headers=headers,
-            auth=auth
-        ).json()["values"]
+        sprints = get_sprints(board_id)
 
         for sprint in sprints:
 
@@ -39,20 +59,15 @@ def get_sprints_ending_today():
             if not end_date:
                 continue
 
-            end = datetime.fromisoformat(end_date.replace("Z", "+00:00")).date()
-            today = datetime.utcnow().date()
+            sprint_end = datetime.fromisoformat(end_date.replace("Z", "+00:00")).date()
 
-            if end != today:
+            if sprint_end != today:
                 continue
 
             sprint_id = sprint["id"]
             sprint_name = sprint["name"]
 
-            issues = requests.get(
-                f"{JIRA_BASE_URL}/rest/agile/1.0/sprint/{sprint_id}/issue",
-                headers=headers,
-                auth=auth
-            ).json()["issues"]
+            issues = get_issues(sprint_id)
 
             total = len(issues)
             done = 0
@@ -61,10 +76,12 @@ def get_sprints_ending_today():
 
             for issue in issues:
 
-                status = issue["fields"]["status"]["name"].lower()
-                issue_type = issue["fields"]["issuetype"]["name"].lower()
+                fields = issue["fields"]
 
-                sp = issue["fields"].get("customfield_10016")
+                status = fields["status"]["name"].lower()
+                issue_type = fields["issuetype"]["name"].lower()
+
+                sp = fields.get("customfield_10016")
 
                 if sp:
                     story_points += sp
@@ -76,12 +93,14 @@ def get_sprints_ending_today():
                     bugs += 1
 
             results.append({
+
                 "project_name": board_name,
                 "sprint_name": sprint_name,
                 "sprint_id": sprint_id,
                 "completed_issues": done,
                 "bugs_fixed": bugs,
                 "story_points": story_points
+
             })
 
     return results

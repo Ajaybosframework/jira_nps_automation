@@ -1,43 +1,22 @@
 import smtplib
 from email.mime.text import MIMEText
-import config
+from config import EMAIL_SENDER, EMAIL_PASSWORD
 
 
-def send_email(summary):
-
-    subject = "Test Sprint Completed – Feedback Request"
-
-    body = f"""
-Hello,
-
-The sprint has been successfully completed.
-
-Sprint Summary
-----------------
-
-{summary}
-
-We would appreciate your feedback on this sprint.
-
-Please complete the NPS survey below:
-
-{config.NPS_FORM_LINK}
-
-Thank you for your collaboration.
-
-Best Regards
-Development Team
-"""
+def send_email(to_email, subject, body):
 
     msg = MIMEText(body)
+
     msg["Subject"] = subject
-    msg["From"] = config.EMAIL_SENDER
-    msg["To"] = config.CLIENT_EMAIL
+    msg["From"] = EMAIL_SENDER
+    msg["To"] = to_email
 
-    server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
 
-    server.login(config.EMAIL_SENDER, config.EMAIL_PASSWORD)
+        server.login(EMAIL_SENDER, EMAIL_PASSWORD)
 
-    server.send_message(msg)
-
-    server.quit()
+        server.sendmail(
+            EMAIL_SENDER,
+            to_email,
+            msg.as_string()
+        )
